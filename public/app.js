@@ -47,9 +47,7 @@ const state = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun.miwifi.com:3478' },
-    { urls: 'stun:stun.xten.com:3478' },
-    { urls: 'stun:stun.schlund.de:3478' },
-    { urls: 'stun:stun.voipbuster.com:3478' }
+    { urls: 'stun:stun.xten.com:3478' }
   ],
   reconnectAttempts: new Map(), // Map<peerSocketId, number>
   MAX_RECONNECT_ATTEMPTS: 3

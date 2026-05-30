@@ -13,13 +13,22 @@ const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
 // ----- ICE Server Config -----
 function getIceServers() {
   const servers = [
-    // Public STUN servers (accessible globally, including China)
+    // Public STUN servers
     { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun.miwifi.com:3478' },
     { urls: 'stun:stun.xten.com:3478' },
-    { urls: 'stun:stun.schlund.de:3478' },
-    { urls: 'stun:stun.voipbuster.com:3478' }
+    { urls: 'stun:stun.voipbuster.com:3478' },
+    // Free TURN server from Metered.ca (relays media when P2P fails)
+    {
+      urls: 'turn:global.metered.ca:443?transport=tcp',
+      username: 'da37d1fe00331ed9b9dd6f9e',
+      credential: 'HoCr7wUXlfib3mI5'
+    },
+    {
+      urls: 'turn:global.metered.ca:3478?transport=udp',
+      username: 'da37d1fe00331ed9b9dd6f9e',
+      credential: 'HoCr7wUXlfib3mI5'
+    }
   ];
   if (process.env.TURN_URL) {
     servers.push({
