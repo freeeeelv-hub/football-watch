@@ -13,23 +13,29 @@ const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
 // ----- ICE Server Config -----
 function getIceServers() {
   const servers = [
-    // Public STUN servers
+    // STUN servers (for discovering public IP)
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun.miwifi.com:3478' },
     { urls: 'stun:stun.xten.com:3478' },
     { urls: 'stun:stun.voipbuster.com:3478' },
-    // Free TURN server from Metered.ca (relays media when P2P fails)
+    // Free TURN servers (relay when P2P direct fails — critical for mobile/cellular)
     {
-      urls: 'turn:global.metered.ca:443?transport=tcp',
-      username: 'da37d1fe00331ed9b9dd6f9e',
-      credential: 'HoCr7wUXlfib3mI5'
+      urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
     },
     {
-      urls: 'turn:global.metered.ca:3478?transport=udp',
-      username: 'da37d1fe00331ed9b9dd6f9e',
-      credential: 'HoCr7wUXlfib3mI5'
+      urls: 'turn:openrelay.metered.ca:80?transport=tcp',
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    },
+    {
+      urls: 'turn:numb.viagenie.ca:3478?transport=udp',
+      username: 'webrtc@live.com',
+      credential: 'muazkh'
     }
   ];
+  // User can override with their own TURN via env vars
   if (process.env.TURN_URL) {
     servers.push({
       urls: process.env.TURN_URL,

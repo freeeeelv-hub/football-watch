@@ -47,7 +47,17 @@ const state = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun.miwifi.com:3478' },
-    { urls: 'stun:stun.xten.com:3478' }
+    { urls: 'stun:stun.xten.com:3478' },
+    {
+      urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:80?transport=tcp',
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    }
   ],
   reconnectAttempts: new Map(), // Map<peerSocketId, number>
   MAX_RECONNECT_ATTEMPTS: 3
