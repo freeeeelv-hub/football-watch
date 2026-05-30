@@ -13,29 +13,28 @@ const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
 // ----- ICE Server Config -----
 function getIceServers() {
   const servers = [
-    // STUN servers (for discovering public IP)
+    // STUN
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun.miwifi.com:3478' },
-    { urls: 'stun:stun.xten.com:3478' },
-    { urls: 'stun:stun.voipbuster.com:3478' },
-    // Free TURN servers (relay when P2P direct fails — critical for mobile/cellular)
+    // VPS TURN server (domestic, low latency)
+    {
+      urls: 'turn:124.220.81.3:3478?transport=udp',
+      username: 'turnuser',
+      credential: 'turnpass123'
+    },
+    {
+      urls: 'turn:124.220.81.3:3478?transport=tcp',
+      username: 'turnuser',
+      credential: 'turnpass123'
+    },
+    // Public fallback TURN
     {
       urls: 'turn:openrelay.metered.ca:443?transport=tcp',
       username: 'openrelayproject',
       credential: 'openrelayproject'
-    },
-    {
-      urls: 'turn:openrelay.metered.ca:80?transport=tcp',
-      username: 'openrelayproject',
-      credential: 'openrelayproject'
-    },
-    {
-      urls: 'turn:numb.viagenie.ca:3478?transport=udp',
-      username: 'webrtc@live.com',
-      credential: 'muazkh'
     }
   ];
-  // User can override with their own TURN via env vars
+  // Env var override
   if (process.env.TURN_URL) {
     servers.push({
       urls: process.env.TURN_URL,
@@ -54,9 +53,17 @@ const rooms = {};
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ICE config endpoint
+// ICE & SFU config endpoint
 app.get('/api/config', (_req, res) => {
-  res.json({ iceServers: getIceServers() });
+  res.json({
+    iceServers: getIceServers(),
+    sfuServer: process.env.SFU_SERVER || 'ws://124.220.81.3:8000',
+    turnServer: process.env.TURN_URL ? {
+      url: process.env.TURN_URL,
+      username: process.env.TURN_USERNAME,
+      credential: process.env.TURN_CREDENTIAL
+    } : null
+  });
 });
 
 // SPA fallback
