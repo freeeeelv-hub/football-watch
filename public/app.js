@@ -746,15 +746,16 @@ async function createPeerConnection(peerSocketId, isInitiator) {
   }
 
   // 3b. Non-host viewers: create a receive-only video transceiver
-  // so the host's screen share video track can be matched
+  // so the host's screen share video track can be matched in the SDP
   if (!state.isHost) {
     pc.addTransceiver('video', { direction: 'recvonly' });
   }
 
   // 4. If host and sharing screen, add screen video track
-  if (state.isHost && state.localScreenStream) {
+  // (ONLY when initiating — for non-initiating, track is added later in handleSignalOffer)
+  if (state.isHost && state.localScreenStream && isInitiator) {
     const videoTrack = state.localScreenStream.getVideoTracks()[0];
-    if (videoTrack) {
+    if (videoTrack && !pc.getSenders().find(s => s.track?.kind === 'video')) {
       pc.addTrack(videoTrack, state.localScreenStream);
     }
   }
@@ -830,6 +831,24 @@ async function handleSignalOffer({ fromSocketId, sdp }) {
 
   try {
     await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+
+    // Host: add screen share video track now (after remote description is set)
+    // so it can match the viewer's recvonly video transceiver
+    if (state.isHost && state.localScreenStream) {
+      const videoTrack = state.localScreenStream.getVideoTracks()[0];
+      if (videoTrack) {
+        const senders = pc.getSenders();
+        const videoSender = senders.find(s => s.track?.kind === 'video');
+        if (!videoSender) {
+          pc.addTrack(videoTrack, state.localScreenStream);
+          console.log('[SIGNAL] Added screen video track to answer');
+        } else {
+          console.log('[SIGNAL] Video sender already exists, replacing track');
+          await videoSender.replaceTrack(videoTrack);
+        }
+      }
+    }
+
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
     state.socket.emit('signal-answer', {
