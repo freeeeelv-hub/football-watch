@@ -745,6 +745,12 @@ async function createPeerConnection(peerSocketId, isInitiator) {
     }
   }
 
+  // 3b. Non-host viewers: create a receive-only video transceiver
+  // so the host's screen share video track can be matched
+  if (!state.isHost) {
+    pc.addTransceiver('video', { direction: 'recvonly' });
+  }
+
   // 4. If host and sharing screen, add screen video track
   if (state.isHost && state.localScreenStream) {
     const videoTrack = state.localScreenStream.getVideoTracks()[0];
