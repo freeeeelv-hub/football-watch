@@ -545,9 +545,9 @@ async function startScreenShare() {
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video: {
         cursor: 'always',
-        frameRate: { ideal: 15, max: 15 },
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
+        frameRate: { ideal: 30, max: 30 },
+        width: { ideal: 1920, max: 1920 },
+        height: { ideal: 1080, max: 1080 }
       },
       audio: false  // System audio adds complexity; host mic picks up game sound
     });
@@ -691,10 +691,19 @@ function clearScreenVideo() {
 // ===================================================================
 
 function toggleFullscreen() {
-  const el = document.getElementById('video-area');
+  const el = document.getElementById('room-section');
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
     if (el.requestFullscreen) {
-      el.requestFullscreen().catch(() => {});
+      el.requestFullscreen().then(() => {
+        console.log('[FULLSCREEN] Entered');
+      }).catch((err) => {
+        console.error('[FULLSCREEN] Error:', err);
+        // Fallback: try video element only
+        const v = document.getElementById('screen-video');
+        if (v && v.srcObject && v.requestFullscreen) {
+          v.requestFullscreen().catch(() => {});
+        }
+      });
     } else if (el.webkitRequestFullscreen) {
       el.webkitRequestFullscreen();
     }
