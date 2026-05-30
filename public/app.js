@@ -161,6 +161,7 @@ async function handleCreateRoom() {
 
   state.nickname = inputs.nickname;
   state.roomId = inputs.roomId;
+  state.justJoined = true;  // Mark as new joiner to initiate connections
   localStorage.setItem('football-watch-nickname', state.nickname);
 
   // Connect socket
@@ -179,6 +180,7 @@ async function handleJoinRoom() {
 
   state.nickname = inputs.nickname;
   state.roomId = inputs.roomId;
+  state.justJoined = true;  // Mark as new joiner to initiate connections
   localStorage.setItem('football-watch-nickname', state.nickname);
 
   // Connect socket
@@ -234,23 +236,26 @@ function bindSocketEvents() {
     updateMemberList(members, host);
     showToast('Room created! Share the Room ID with friends.');
     startLocalAudio();
-
-    // Connect to all existing members (none on create, but handle future joins)
-    connectToMembers(members);
+    // Host is the only member, no connections to make
+    state.justJoined = false;
   });
 
-  // Room joined (all members, including joiner)
+  // Room joined (all members)
   socket.on('room-joined', ({ roomId, members, host }) => {
     console.log('[ROOM] Joined:', roomId, members.length, 'members');
     state.roomHost = host;
     state.roomId = roomId;
     showRoomUI();
     updateMemberList(members, host);
-    showToast('You joined the room!');
-    startLocalAudio();
 
-    // New joiner initiates connections to all EXISTING peers (except self)
-    connectToMembers(members);
+    if (state.justJoined) {
+      // We are the new joiner → initiate connections to all existing peers
+      showToast('You joined the room!');
+      startLocalAudio();
+      connectToMembers(members);
+      state.justJoined = false;
+    }
+    // Existing members: just update UI, they will receive offers from the new joiner
   });
 
   // Peer left
