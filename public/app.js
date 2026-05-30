@@ -327,6 +327,7 @@ function showLobbyUI() {
   roomSection.classList.add('hidden');
   lobbySection.classList.remove('hidden');
   screenVideo.srcObject = null;
+  screenVideo.classList.remove('has-stream');
   noScreenMsg.classList.remove('hidden');
   memberPanel.classList.add('hidden');
   localPreview.classList.add('hidden');
@@ -671,6 +672,7 @@ function hideLocalPreview() {
 
 function clearScreenVideo() {
   screenVideo.srcObject = null;
+  screenVideo.classList.remove('has-stream');
   noScreenMsg.classList.remove('hidden');
 }
 
@@ -876,6 +878,7 @@ function handleRemoteTrack(peerSocketId, event) {
         console.log('[TRACK] Video track from', peerSocketId);
         if (screenVideo.srcObject !== stream) {
           screenVideo.srcObject = stream;
+          screenVideo.classList.add('has-stream');
           noScreenMsg.classList.add('hidden');
         }
 

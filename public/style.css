@@ -350,16 +350,13 @@ body {
   background: #000;
 }
 
-#screen-video:not([srcObject]) {
+/* Video hidden when no stream (controlled by JS via .has-stream class) */
+#screen-video:not(.has-stream) {
   display: none;
 }
 
-/* Show when there's a stream */
-#screen-video[srcObject] {
-  display: block;
-}
-
-#screen-video[srcObject] ~ #no-screen-msg {
+/* Hide waiting message when video has stream */
+#screen-video.has-stream ~ #no-screen-msg {
   display: none;
 }
 
