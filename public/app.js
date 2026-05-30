@@ -545,9 +545,9 @@ async function startScreenShare() {
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video: {
         cursor: 'always',
-        frameRate: { ideal: 30 },
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
+        frameRate: { ideal: 15, max: 15 },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
       },
       audio: false  // System audio adds complexity; host mic picks up game sound
     });
