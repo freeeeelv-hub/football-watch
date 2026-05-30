@@ -13,8 +13,13 @@ const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
 // ----- ICE Server Config -----
 function getIceServers() {
   const servers = [
+    // Public STUN servers (accessible globally, including China)
     { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' }
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun.miwifi.com:3478' },
+    { urls: 'stun:stun.xten.com:3478' },
+    { urls: 'stun:stun.schlund.de:3478' },
+    { urls: 'stun:stun.voipbuster.com:3478' }
   ];
   if (process.env.TURN_URL) {
     servers.push({
