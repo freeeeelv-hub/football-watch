@@ -691,28 +691,44 @@ function clearScreenVideo() {
 // ===================================================================
 
 function toggleFullscreen() {
-  const el = document.getElementById('room-section');
-  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-    if (el.requestFullscreen) {
-      el.requestFullscreen().then(() => {
-        console.log('[FULLSCREEN] Entered');
-      }).catch((err) => {
-        console.error('[FULLSCREEN] Error:', err);
-        // Fallback: try video element only
-        const v = document.getElementById('screen-video');
-        if (v && v.srcObject && v.requestFullscreen) {
-          v.requestFullscreen().catch(() => {});
-        }
-      });
-    } else if (el.webkitRequestFullscreen) {
-      el.webkitRequestFullscreen();
-    }
-  } else {
+  // On mobile, fullscreen the video element (better support)
+  // On desktop, fullscreen the whole room section
+  const videoEl = document.getElementById('screen-video');
+  const roomEl = document.getElementById('room-section');
+  const hasVideo = videoEl && videoEl.srcObject;
+
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    // Exit fullscreen
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
     }
+    return;
+  }
+
+  // iOS Safari: use webkitEnterFullscreen on video element
+  if (hasVideo && videoEl.webkitEnterFullscreen) {
+    videoEl.webkitEnterFullscreen();
+    return;
+  }
+
+  // Try video element first (better mobile support)
+  if (hasVideo && videoEl.requestFullscreen) {
+    videoEl.requestFullscreen().catch(() => {
+      // Fallback to room element
+      if (roomEl.requestFullscreen) {
+        roomEl.requestFullscreen().catch(() => {});
+      }
+    });
+    return;
+  }
+
+  // Desktop: fullscreen the whole room
+  if (roomEl.requestFullscreen) {
+    roomEl.requestFullscreen().catch(() => {});
+  } else if (roomEl.webkitRequestFullscreen) {
+    roomEl.webkitRequestFullscreen();
   }
 }
 
