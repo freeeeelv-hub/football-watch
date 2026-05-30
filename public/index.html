@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f0f0f">
+  <title>Football Watch Party - Screen Share</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- ====== LOBBY ====== -->
+  <section id="lobby-section" class="full-page">
+    <div class="lobby-card">
+      <div class="lobby-logo">⚽</div>
+      <h1>Football Watch Party</h1>
+      <p class="lobby-subtitle">Share your screen, watch together, talk live</p>
+
+      <div class="lobby-form">
+        <div class="input-group">
+          <label for="nickname-input">Your Name</label>
+          <input id="nickname-input" type="text" placeholder="Enter your name" maxlength="20" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+          <label for="room-id-input">Room ID</label>
+          <input id="room-id-input" type="text" placeholder="Leave blank to create a new room" maxlength="30" autocomplete="off">
+          <span class="input-hint">Share this ID with friends to join your room</span>
+        </div>
+
+        <div id="lobby-error" class="error-msg hidden"></div>
+
+        <div class="lobby-buttons">
+          <button id="btn-create" class="btn btn-primary">Create Room</button>
+          <button id="btn-join" class="btn btn-secondary">Join Room</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ROOM ====== -->
+  <section id="room-section" class="full-page hidden">
+    <!-- Header -->
+    <header id="room-header">
+      <div id="room-info">
+        <span id="room-id-display" class="room-id-badge">Room: ----</span>
+        <span id="member-count" class="member-badge">👤 1</span>
+      </div>
+      <div id="member-list-toggle" class="member-list-toggle">
+        <button id="btn-members" class="btn btn-small">Members</button>
+      </div>
+      <button id="btn-leave" class="btn btn-danger btn-small">Leave</button>
+    </header>
+
+    <!-- Member list dropdown -->
+    <div id="member-panel" class="member-panel hidden">
+      <div id="member-list"></div>
+    </div>
+
+    <!-- Main video area -->
+    <main id="video-area">
+      <div id="screen-container">
+        <video id="screen-video" autoplay playsinline muted></video>
+        <div id="no-screen-msg" class="overlay-msg">
+          <div class="overlay-icon">📺</div>
+          <p>Waiting for host to share screen...</p>
+          <p class="overlay-hint">The host can share their screen showing the football live stream</p>
+        </div>
+      </div>
+
+      <!-- Local screen preview (PiP for host) -->
+      <div id="local-preview" class="hidden">
+        <video id="local-preview-video" autoplay playsinline muted></video>
+      </div>
+    </main>
+
+    <!-- Hidden audio container for remote peer audio -->
+    <div id="audio-container" style="display:none;"></div>
+
+    <!-- Toast container -->
+    <div id="toast-container"></div>
+
+    <!-- Bottom control bar -->
+    <footer id="control-bar">
+      <button id="btn-mic" class="ctrl-btn mic-on" title="Toggle Microphone">
+        <span class="ctrl-icon">🎤</span>
+        <span class="ctrl-label">Mic On</span>
+      </button>
+
+      <button id="btn-screen-share" class="ctrl-btn host-only hidden" title="Share Screen">
+        <span class="ctrl-icon">📺</span>
+        <span class="ctrl-label">Share Screen</span>
+      </button>
+
+      <button id="btn-fullscreen" class="ctrl-btn" title="Fullscreen">
+        <span class="ctrl-icon">⛶</span>
+        <span class="ctrl-label">Fullscreen</span>
+      </button>
+    </footer>
+  </section>
+
+  <!-- Socket.IO client -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- App logic -->
+  <script src="/app.js"></script>
+</body>
+</html>

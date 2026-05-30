@@ -1,0 +1,21 @@
+{
+  "name": "screen-share-football",
+  "version": "1.0.0",
+  "description": "Lightweight WebRTC screen sharing for football watch parties",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "selfsigned": "^5.5.0"
+  }
+}
